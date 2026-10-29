@@ -59,6 +59,7 @@ export interface FeaPreset {
   nodes: FeaNode[];
   elements: FeaElement[];
   description?: string;
+  customDofs?: Record<number, number>; // Reordenação manual de GDL (antigo -> novo)
 }
 
 export interface ProblemConfig {
@@ -187,4 +188,12 @@ export interface FeaAnalysisResult {
   barStresses: BarStressResult[];
   criticalBar: BarStressResult | null;
   vibration: VibrationResult | null;
+  // Hybrid numerical evaluation results
+  isHybridNumeric?: boolean;
+  numericDisplacements?: number[] | null;
+  numericUnits?: string[];
+  numericStresses?: Array<{ elem: number; label: string; sigmaNum: number; NNum: number }>;
+  numericReactions?: Record<number, number>;
+  numericVibrations?: Array<{ omegaNum: number; fNumHz: number }>;
+  unifiedEABase?: boolean;
 }

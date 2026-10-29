@@ -8,6 +8,7 @@ import {
   Layers, Gauge, Activity, Cpu, Variable
 } from 'lucide-react';
 import { ActiveQuestions, FeaMode, ProblemConfig } from '../../types/fea';
+import { getTranslation, SupportedLang } from '../../utils/i18n';
 
 interface QuestionTogglesProps {
   mode: FeaMode;
@@ -15,6 +16,7 @@ interface QuestionTogglesProps {
   onToggleQuestion: (key: keyof ActiveQuestions) => void;
   config: ProblemConfig;
   onUpdateConfig: (updater: (prev: ProblemConfig) => ProblemConfig) => void;
+  lang?: SupportedLang;
 }
 
 export const QuestionToggles: React.FC<QuestionTogglesProps> = ({
@@ -22,8 +24,10 @@ export const QuestionToggles: React.FC<QuestionTogglesProps> = ({
   activeQuestions,
   onToggleQuestion,
   config,
-  onUpdateConfig
+  onUpdateConfig,
+  lang = 'pt'
 }) => {
+  const t = getTranslation(lang);
   const [showConfigPanel, setShowConfigPanel] = React.useState(false);
 
   const toggleItems: Array<{
@@ -34,68 +38,68 @@ export const QuestionToggles: React.FC<QuestionTogglesProps> = ({
   }> = [
     {
       key: 'mcTable',
-      label: 'Tabela de Conectividade (m.c.)',
-      sublabel: 'G.D.L., ângulos θ e comprimentos',
+      label: t.mcTable,
+      sublabel: t.mcTableSub,
       applicableModes: ['Mola', 'Barra2D', 'Viga', 'VigaBarra2D']
     },
     {
       key: 'stiffnessMatrix',
-      label: 'Matriz de Rigidez Global [K]',
-      sublabel: 'Montagem passo a passo dos termos Kij',
+      label: t.stiffnessMatrix,
+      sublabel: t.stiffnessMatrixSub,
       applicableModes: ['Mola', 'Barra2D', 'Viga', 'VigaBarra2D']
     },
     {
       key: 'forceVector',
-      label: 'Vetor de Forças Equivalentes {F}',
-      sublabel: 'Integrais das funções de forma -∫p(x)Ni dx',
+      label: t.forceVector,
+      sublabel: t.forceVectorSub,
       applicableModes: ['Mola', 'Barra2D', 'Viga', 'VigaBarra2D']
     },
     {
       key: 'displacements',
-      label: 'Deslocamentos Nodais {u}',
-      sublabel: 'Resolução do sistema [K]{u} = {F}',
+      label: t.displacements,
+      sublabel: t.displacementsSub,
       applicableModes: ['Mola', 'Barra2D', 'Viga', 'VigaBarra2D']
     },
     {
       key: 'reactions',
-      label: 'Reações de Apoio',
-      sublabel: 'Cálculo direto a partir das linhas restringidas',
+      label: t.reactions,
+      sublabel: t.reactionsSub,
       applicableModes: ['Viga', 'VigaBarra2D', 'Barra2D']
     },
     {
       key: 'stresses',
-      label: 'Tensões Axiais (σ) e Normal (N)',
-      sublabel: 'Transformação local {u}=[R]{U} e σ=E/L·δ',
+      label: t.stresses,
+      sublabel: t.stressesSub,
       applicableModes: ['Barra2D', 'VigaBarra2D']
     },
     {
       key: 'criticalZone',
-      label: 'Zona Crítica da Estrutura',
-      sublabel: 'Barra com máxima tensão absoluta |σ|max',
+      label: t.criticalZone,
+      sublabel: t.criticalZoneSub,
       applicableModes: ['Barra2D']
     },
     {
       key: 'interpolation',
-      label: 'Interpolação num Ponto x',
-      sublabel: 'Deslocamento, rotação, M(x) e V(x)',
+      label: t.interpolation,
+      sublabel: t.interpolationSub,
       applicableModes: ['Barra2D', 'Viga', 'VigaBarra2D']
     },
     {
       key: 'criticalPoints',
-      label: 'Pontos Críticos / Zeros de Rotação',
-      sublabel: 'Resolução de θ(x)=0, v(x)=0 e extremos',
+      label: t.criticalPoints,
+      sublabel: t.criticalPointsSub,
       applicableModes: ['Viga']
     },
     {
       key: 'vibrations',
-      label: 'Modos de Vibração e Frequências',
-      sublabel: 'Matriz de massa consistente [M] e |[K]-ω²[M]|=0',
+      label: t.vibrations,
+      sublabel: t.vibrationsSub,
       applicableModes: ['Barra2D', 'Viga']
     },
     {
       key: 'potentialEnergy',
-      label: 'Energia Potencial Mínima',
-      sublabel: 'Princípio de Estacionaridade Π = Ue - W',
+      label: t.potentialEnergy,
+      sublabel: t.potentialEnergySub,
       applicableModes: ['Mola']
     }
   ];
@@ -108,19 +112,19 @@ export const QuestionToggles: React.FC<QuestionTogglesProps> = ({
         <div className="flex items-center gap-2">
           <Layers className="w-4 h-4 text-blue-600" />
           <h2 className="font-extrabold text-sm text-slate-800 tracking-tight">
-            Alíneas Pedidas no Enunciado (Toggles Ativos)
+            {t.activeQuestionsTitle}
           </h2>
         </div>
 
         <button
           onClick={() => setShowConfigPanel(!showConfigPanel)}
-          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border transition-colors ${
+          className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-bold border transition-colors cursor-pointer ${
             showConfigPanel || config.substituteInertia || Object.values(config.variables).some((v) => v !== null)
               ? 'bg-indigo-50 border-indigo-300 text-indigo-700'
               : 'border-slate-300 text-slate-600 hover:bg-slate-50'
           }`}
         >
-          <Variable className="w-3.5 h-3.5" /> Variáveis & Rigidez
+          <Variable className="w-3.5 h-3.5" /> {t.variablesAndRigidity}
         </button>
       </div>
 
@@ -157,11 +161,11 @@ export const QuestionToggles: React.FC<QuestionTogglesProps> = ({
             <div className="flex items-center gap-2">
               <Settings2 className="w-4 h-4 text-indigo-600" />
               <h3 className="font-extrabold text-slate-900">
-                Painel Algébrico Híbrido (Simbólico vs Valores Numéricos)
+                {t.hybridPanelTitle}
               </h3>
             </div>
             <span className="text-[11px] text-slate-500">
-              Deixe vazio para manter a expressão simbólica exata da Sebenta
+              {t.hybridPanelSub}
             </span>
           </div>
 
@@ -211,13 +215,13 @@ export const QuestionToggles: React.FC<QuestionTogglesProps> = ({
                   className="w-4 h-4 text-indigo-600 rounded"
                 />
                 <label htmlFor="inertiaSub" className="font-bold text-slate-800 cursor-pointer">
-                  Substituir momento de inércia por <span className="font-serif italic font-bold">I = n · A · L²</span>
+                  {t.substituteInertiaLabel}
                 </label>
               </div>
 
               {config.substituteInertia && (
                 <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-bold text-slate-500">Fator n:</span>
+                  <span className="text-[11px] font-bold text-slate-500">{t.factorN}</span>
                   <input
                     type="number"
                     step="0.01"

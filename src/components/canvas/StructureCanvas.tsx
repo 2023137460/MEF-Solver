@@ -13,8 +13,9 @@ import { SupportsSvg } from './SupportsSvg';
 import { DistributedLoadSvg, NodalLoadSvg } from './LoadsSvg';
 import { DofOverlaySvg } from './DofOverlaySvg';
 import { CadDimensions } from './CadDimensions';
-import { ElementHud, NodeHud } from './FloatingHud';
+import { ElementHud, NodeHud, DimensionHud, DofReorderHud } from './FloatingHud';
 import { fmtNum, fmtSymbolicL } from '../../engine/expr';
+import { getTranslation } from '../../utils/i18n';
 
 interface StructureCanvasProps {
   state: FeaPreset;
@@ -23,6 +24,8 @@ interface StructureCanvasProps {
   showDofs: boolean;
   setShowDofs: (show: boolean) => void;
   onSelectDof?: (dofIndex: number) => void;
+  onReorderDof?: (oldDof: number, newDof: number) => void;
+  lang?: 'pt' | 'en';
 }
 
 export const StructureCanvas: React.FC<StructureCanvasProps> = ({
@@ -31,8 +34,11 @@ export const StructureCanvas: React.FC<StructureCanvasProps> = ({
   onChange,
   showDofs,
   setShowDofs,
-  onSelectDof
+  onSelectDof,
+  onReorderDof,
+  lang = 'pt'
 }) => {
+  const t = getTranslation(lang);
   const [activeTool, setActiveTool] = useState<'select' | 'move' | 'addNode' | 'addBar' | 'delete'>('select');
   const [snapStep, setSnapStep] = useState<number>(0.5);
   const [showAngles, setShowAngles] = useState<boolean>(true);
@@ -42,6 +48,21 @@ export const StructureCanvas: React.FC<StructureCanvasProps> = ({
   const [selectedNodeId, setSelectedNodeId] = useState<number | null>(null);
   const [selectedElemId, setSelectedElemId] = useState<number | null>(null);
   const [connectStartNodeId, setConnectStartNodeId] = useState<number | null>(null);
+
+  // Dimension & DOF Hud state
+  const [activeDimensionHud, setActiveDimensionHud] = useState<{
+    type: 'h' | 'v';
+    val: number;
+    nodeAId: number;
+    nodeBId: number;
+    nodeALabel: string;
+    nodeBLabel: string;
+  } | null>(null);
+
+  const [activeDofHud, setActiveDofHud] = useState<{
+    dofIdx: number;
+    nodeLabel: string;
+  } | null>(null);
 
   // SVG Camera ViewBox
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -310,6 +331,70 @@ export const StructureCanvas: React.FC<StructureCanvasProps> = ({
     return { vLines, hLines };
   }, [viewBox.x, viewBox.y, viewBox.w, viewBox.h]);
 
+  // Apply new dimension length between nodeA and nodeB
+  const handleApplyNewDim = (newVal: number) => {
+    if (!activeDimensionHud) return;
+    const { type, val: oldVal, nodeAId, nodeBId } = activeDimensionHud;
+    const delta = newVal - oldVal;
+    if (Math.abs(delta) < 1e-5) {
+      setActiveDimensionHud(null);
+      return;
+    }
+
+    const nodeA = state.nodes.find((n) => n.id === nodeAId);
+    const nodeB = state.nodes.find((n) => n.id === nodeBId);
+    if (!nodeA || !nodeB) {
+      setActiveDimensionHud(null);
+      return;
+    }
+
+    onChange((prev) => {
+      const coordA = type === 'h' ? nodeA.x : nodeA.y;
+      const coordB = type === 'h' ? nodeB.x : nodeB.y;
+      const minCoord = Math.min(coordA, coordB);
+      const isShiftRightOrUp = coordB > coordA;
+
+      const updatedNodes = prev.nodes.map((n) => {
+        const c = type === 'h' ? n.x : n.y;
+        if (isShiftRightOrUp ? c > minCoord + 1e-4 : c < minCoord - 1e-4) {
+          return {
+            ...n,
+            [type === 'h' ? 'x' : 'y']: Number((c + (isShiftRightOrUp ? delta : -delta)).toFixed(4))
+          };
+        }
+        return n;
+      });
+
+      const nMap: Record<number, FeaNode> = {};
+      updatedNodes.forEach((n) => (nMap[n.id] = n));
+
+      const updatedElems = prev.elements.map((el) => {
+        const n1 = nMap[el.n1];
+        const n2 = nMap[el.n2];
+        if (!n1 || !n2) return el;
+        const dx = n2.x - n1.x;
+        const dy = n2.y - n1.y;
+        const newL = Number((Math.hypot(dx, dy) || 1).toFixed(4));
+        const newTh = Number(((Math.atan2(dy, dx) * 180) / Math.PI).toFixed(3));
+        return {
+          ...el,
+          L: el.lockL ? el.L : newL,
+          th1: el.customAngles ? el.th1 : newTh,
+          th2: el.customAngles ? el.th2 : newTh
+        };
+      });
+
+      return {
+        ...prev,
+        id: 'custom',
+        nodes: updatedNodes,
+        elements: updatedElems
+      };
+    });
+
+    setActiveDimensionHud(null);
+  };
+
   const selectedNode = state.nodes.find((n) => n.id === selectedNodeId);
   const selectedElement = state.elements.find((el) => el.id === selectedElemId);
 
@@ -327,9 +412,9 @@ export const StructureCanvas: React.FC<StructureCanvasProps> = ({
               ? 'bg-blue-600 text-white shadow-xs'
               : 'text-slate-700 hover:bg-slate-100'
           }`}
-          title="Selecionar e Mover Nós"
+          title={t.toolSelect}
         >
-          <MousePointer className="w-3.5 h-3.5" /> Selecionar
+          <MousePointer className="w-3.5 h-3.5" /> {t.toolSelect}
         </button>
 
         <button
@@ -342,9 +427,9 @@ export const StructureCanvas: React.FC<StructureCanvasProps> = ({
               ? 'bg-blue-600 text-white shadow-xs'
               : 'text-slate-700 hover:bg-slate-100'
           }`}
-          title="Criar Nó no Canvas"
+          title={t.toolAddNode}
         >
-          <Plus className="w-3.5 h-3.5" /> Nó
+          <Plus className="w-3.5 h-3.5" /> {t.toolAddNode}
         </button>
 
         <button
@@ -357,9 +442,9 @@ export const StructureCanvas: React.FC<StructureCanvasProps> = ({
               ? 'bg-blue-600 text-white shadow-xs'
               : 'text-slate-700 hover:bg-slate-100'
           }`}
-          title="Ligar 2 Nós com uma Barra"
+          title={t.toolAddBar}
         >
-          <Link2 className="w-3.5 h-3.5" /> Barra
+          <Link2 className="w-3.5 h-3.5" /> {t.toolAddBar}
         </button>
 
         <button
@@ -372,9 +457,9 @@ export const StructureCanvas: React.FC<StructureCanvasProps> = ({
               ? 'bg-red-600 text-white shadow-xs'
               : 'text-slate-700 hover:bg-slate-100'
           }`}
-          title="Eliminar Nó ou Elemento"
+          title={t.toolDelete}
         >
-          <Trash2 className="w-3.5 h-3.5" /> Apagar
+          <Trash2 className="w-3.5 h-3.5" /> {t.toolDelete}
         </button>
 
         <div className="w-[1px] h-5 bg-slate-200 mx-1" />
@@ -385,9 +470,9 @@ export const StructureCanvas: React.FC<StructureCanvasProps> = ({
           className={`px-2 py-1.5 rounded-lg font-bold text-xs flex items-center gap-1 transition-colors ${
             showDofs ? 'bg-red-100 text-red-700' : 'text-slate-500 hover:bg-slate-100'
           }`}
-          title="Mostrar/Ocultar Graus de Liberdade (u1, u2...)"
+          title={t.showDofs}
         >
-          <Eye className="w-3.5 h-3.5" /> G.D.L.
+          <Eye className="w-3.5 h-3.5" /> {t.showDofs}
         </button>
 
         <button
@@ -395,9 +480,9 @@ export const StructureCanvas: React.FC<StructureCanvasProps> = ({
           className={`px-2 py-1.5 rounded-lg font-bold text-xs flex items-center gap-1 transition-colors ${
             showDimensions ? 'bg-blue-100 text-blue-700' : 'text-slate-500 hover:bg-slate-100'
           }`}
-          title="Mostrar/Ocultar Cotas CAD"
+          title={t.showDimensions}
         >
-          <Compass className="w-3.5 h-3.5" /> Cotas CAD
+          <Compass className="w-3.5 h-3.5" /> {t.showDimensions}
         </button>
 
         {/* Snap to Grid Selector */}
@@ -484,8 +569,21 @@ export const StructureCanvas: React.FC<StructureCanvasProps> = ({
             nodes={state.nodes}
             scale={SCALE}
             onDimensionClick={(type, val, nA, nB) => {
-              // Clicking dimension allows direct coordinate editing
-              setSelectedNodeId(nB);
+              const nodeA = state.nodes.find((n) => n.id === nA);
+              const nodeB = state.nodes.find((n) => n.id === nB);
+              if (nodeA && nodeB) {
+                setActiveDimensionHud({
+                  type,
+                  val,
+                  nodeAId: nA,
+                  nodeBId: nB,
+                  nodeALabel: nodeA.label,
+                  nodeBLabel: nodeB.label
+                });
+                setSelectedNodeId(null);
+                setSelectedElemId(null);
+                setActiveDofHud(null);
+              }
             }}
           />
         )}
@@ -681,6 +779,13 @@ export const StructureCanvas: React.FC<StructureCanvasProps> = ({
                   dofs={d}
                   onDofClick={(dofIdx) => {
                     onSelectDof?.(dofIdx);
+                    setActiveDofHud({
+                      dofIdx,
+                      nodeLabel: node.label
+                    });
+                    setSelectedNodeId(null);
+                    setSelectedElemId(null);
+                    setActiveDimensionHud(null);
                   }}
                 />
               )}
@@ -747,7 +852,7 @@ export const StructureCanvas: React.FC<StructureCanvasProps> = ({
             }))
           }
           className="p-1 hover:bg-slate-100 rounded text-slate-700"
-          title="Aproximar (Zoom In)"
+          title={t.zoomIn}
         >
           <ZoomIn className="w-4 h-4" />
         </button>
@@ -761,16 +866,16 @@ export const StructureCanvas: React.FC<StructureCanvasProps> = ({
             }))
           }
           className="p-1 hover:bg-slate-100 rounded text-slate-700"
-          title="Afastar (Zoom Out)"
+          title={t.zoomOut}
         >
           <ZoomOut className="w-4 h-4" />
         </button>
         <button
           onClick={() => centerView()}
           className="p-1 hover:bg-slate-100 rounded text-slate-700 flex items-center gap-1 text-xs font-bold px-1.5"
-          title="Centrar Estrutura"
+          title={t.centerView}
         >
-          <Maximize2 className="w-3.5 h-3.5" /> Centrar
+          <Maximize2 className="w-3.5 h-3.5" /> {t.centerView}
         </button>
       </div>
 
@@ -820,6 +925,29 @@ export const StructureCanvas: React.FC<StructureCanvasProps> = ({
             setSelectedElemId(null);
           }}
           onClose={() => setSelectedElemId(null)}
+        />
+      )}
+
+      {/* Floating HUD Popover for Selected Dimension */}
+      {activeDimensionHud && (
+        <DimensionHud
+          dimInfo={activeDimensionHud}
+          onApplyNewDim={handleApplyNewDim}
+          onClose={() => setActiveDimensionHud(null)}
+        />
+      )}
+
+      {/* Floating HUD Popover for Selected DOF Reordering */}
+      {activeDofHud && (
+        <DofReorderHud
+          dofIdx={activeDofHud.dofIdx}
+          maxDof={analysis.nDof}
+          nodeLabel={activeDofHud.nodeLabel}
+          onSwapDof={(targetDof) => {
+            onReorderDof?.(activeDofHud.dofIdx, targetDof);
+            setActiveDofHud(null);
+          }}
+          onClose={() => setActiveDofHud(null)}
         />
       )}
     </div>

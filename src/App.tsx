@@ -119,8 +119,11 @@ export default function App() {
     }
   };
 
-  // Run pure symbolic FEA analysis
-  const analysis = useMemo(() => buildSymbolicAnalysis(exState), [exState]);
+  // Run pure symbolic & hybrid FEA analysis
+  const analysis = useMemo(
+    () => buildSymbolicAnalysis({ ...exState, config, customDofs: exState.customDofs }),
+    [exState, config]
+  );
 
   const handleToggleQuestion = (key: keyof ActiveQuestions) => {
     setActiveQuestions((prev) => ({ ...prev, [key]: !prev[key] }));
@@ -145,28 +148,40 @@ export default function App() {
       />
 
       {/* 2. Main Split-Pane Workspace */}
-      <main className="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+      <main className="flex-1 flex flex-col lg:flex-row overflow-hidden relative print:block print:overflow-visible">
         {/* Left Pane: Interactive Bridge Builder CAD Canvas */}
-        <section className="flex-1 lg:w-1/2 h-[45vh] lg:h-full relative border-r border-slate-300 overflow-hidden">
+        <section className="flex-1 lg:w-1/2 h-[45vh] lg:h-full relative border-r border-slate-300 overflow-hidden print:hidden">
           <StructureCanvas
             state={exState}
             analysis={analysis}
             onChange={updateState}
             showDofs={showDofs}
             setShowDofs={setShowDofs}
+            lang={lang}
+            onReorderDof={(oldDof, newDof) => {
+              updateState((prev) => {
+                const currentMap = { ...(prev.customDofs || {}) };
+                currentMap[oldDof] = newDof;
+                currentMap[newDof] = oldDof;
+                return { ...prev, id: 'custom', customDofs: currentMap };
+              });
+            }}
           />
         </section>
 
         {/* Right Pane: Modular Solver & Resolution Sheet or Study Mode */}
-        <section className="flex-1 lg:w-1/2 h-[55vh] lg:h-full flex flex-col bg-white overflow-hidden shadow-sm">
+        <section className="flex-1 lg:w-1/2 h-[55vh] lg:h-full flex flex-col bg-white overflow-hidden shadow-sm print:w-full print:h-auto print:overflow-visible print:border-none print:shadow-none">
           {/* Alíneas and Hybrid Variables Bar */}
-          <QuestionToggles
-            mode={exState.mode}
-            activeQuestions={activeQuestions}
-            onToggleQuestion={handleToggleQuestion}
-            config={config}
-            onUpdateConfig={setConfig}
-          />
+          <div className="print:hidden">
+            <QuestionToggles
+              mode={exState.mode}
+              activeQuestions={activeQuestions}
+              onToggleQuestion={handleToggleQuestion}
+              config={config}
+              onUpdateConfig={setConfig}
+              lang={lang}
+            />
+          </div>
 
           {/* Scrollable Resolution or Study Content */}
           <div className="flex-1 overflow-y-auto print:overflow-visible">
@@ -176,12 +191,14 @@ export default function App() {
                 analysis={analysis}
                 activeQuestions={activeQuestions}
                 config={config}
+                lang={lang}
               />
             ) : (
               <StudyMode
                 state={exState}
                 analysis={analysis}
                 onRevealSolution={() => setAppMode('resolution')}
+                lang={lang}
               />
             )}
           </div>

@@ -49,6 +49,7 @@ export interface AnalysisInputState {
   nodes: FeaNode[];
   elements: FeaElement[];
   customDofs?: Record<number, number>;
+  config?: import('../types/fea').ProblemConfig;
 }
 
 export function buildSymbolicAnalysis(state: AnalysisInputState): FeaAnalysisResult {
@@ -190,7 +191,11 @@ export function buildSymbolicAnalysis(state: AnalysisInputState): FeaAnalysisRes
     } else if (mode === 'VigaBarra2D') {
       const { kAg, kBg, keTotal, stepStrings, lPowMatrix } = computeVigaBarra2dElementStiffness(row);
       const eaFactor = ((row.E || 1) * (row.A || 1)) / (row.L || 1);
-      const eiFactor = ((row.E || 1) * (row.I || 1)) / Math.pow(row.L || 1, 3);
+      const isSubInertia = Boolean(state.config?.substituteInertia);
+      const nInertia = state.config?.inertiaN || 0.01;
+      const eiFactor = isSubInertia
+        ? eaFactor * nInertia
+        : ((row.E || 1) * (row.I || 1)) / Math.pow(row.L || 1, 3);
 
       for (let i = 0; i < 6; i++) {
         const gi = row.dofs[i];
@@ -207,7 +212,10 @@ export function buildSymbolicAnalysis(state: AnalysisInputState): FeaAnalysisRes
             KsymEA[gi - 1][gj - 1] += vA;
             KsymEI[gi - 1][gj - 1] += vB;
             KsymEILPow[gi - 1][gj - 1] = lPow;
-            addKStep(gi, gj, { sub: `${i + 1}${j + 1}`, el: e }, stepStrings[i][j]);
+            const stepStr = isSubInertia
+              ? `${fmtNum(vA + vB)}(EA/L)`
+              : stepStrings[i][j];
+            addKStep(gi, gj, { sub: `${i + 1}${j + 1}`, el: e }, stepStr);
           }
         }
       }
@@ -364,6 +372,81 @@ export function buildSymbolicAnalysis(state: AnalysisInputState): FeaAnalysisRes
     }
   }
 
+  // 8. Hybrid Numerical Evaluation (when user defines E, A, I, L, P, p, k, etc.)
+  const cfgVars = state.config?.variables;
+  const hasNumericVars = Boolean(
+    cfgVars && Object.values(cfgVars).some((v) => v !== null && v !== undefined && !isNaN(v as number))
+  );
+
+  let numericDisplacements: number[] | null = null;
+  const numericUnits: string[] = [];
+  let numericStresses: Array<{ elem: number; label: string; sigmaNum: number; NNum: number }> = [];
+  const numericReactions: Record<number, number> = {};
+  let numericVibrations: Array<{ omegaNum: number; fNumHz: number }> = [];
+
+  if (hasNumericVars && displacements) {
+    const numE = cfgVars?.E ?? 1;
+    const numA = cfgVars?.A ?? 1;
+    const numI = cfgVars?.I ?? 1;
+    const numL = cfgVars?.L ?? 1;
+    const numP = cfgVars?.P ?? 1;
+    const nump = cfgVars?.p ?? cfgVars?.P ?? 1;
+    const numK = cfgVars?.k ?? 1;
+    const numRho = cfgVars?.rho ?? 1;
+
+    numericDisplacements = displacements.map((uVal, idx) => {
+      const dof = dofInfo[idx + 1];
+      const isRot = dof?.type === 'th';
+      if (mode === 'Mola') {
+        numericUnits.push('m');
+        return uVal * (numP / numK);
+      } else if (mode === 'Barra2D') {
+        numericUnits.push('m');
+        return uVal * ((numP * numL) / (numE * numA));
+      } else if (mode === 'Viga') {
+        if (isRot) {
+          numericUnits.push('rad');
+          return uVal * ((nump * Math.pow(numL, 3)) / (numE * numI));
+        } else {
+          numericUnits.push('m');
+          return uVal * ((nump * Math.pow(numL, 4)) / (numE * numI));
+        }
+      } else {
+        if (isRot) {
+          numericUnits.push('rad');
+          return uVal * ((numP * Math.pow(numL, 2)) / (numE * numI));
+        } else {
+          numericUnits.push('m');
+          return uVal * ((numP * numL) / (numE * numA));
+        }
+      }
+    });
+
+    if (barStresses.length > 0) {
+      numericStresses = barStresses.map((b) => ({
+        elem: b.elem,
+        label: b.label,
+        sigmaNum: b.sigma * (numP / numA),
+        NNum: b.N * numP
+      }));
+    }
+
+    Object.entries(reactions).forEach(([cIdxStr, val]) => {
+      const cIdx = parseInt(cIdxStr, 10);
+      numericReactions[cIdx] = val * (nump * numL);
+    });
+
+    if (vibration && vibration.modes) {
+      numericVibrations = vibration.modes.map((m: any) => {
+        const omegaNum = (m.omega / numL) * Math.sqrt(numE / numRho);
+        return {
+          omegaNum,
+          fNumHz: omegaNum / (2 * Math.PI)
+        };
+      });
+    }
+  }
+
   return {
     nDof,
     nodeDofs,
@@ -382,6 +465,13 @@ export function buildSymbolicAnalysis(state: AnalysisInputState): FeaAnalysisRes
     solveError,
     barStresses,
     criticalBar,
-    vibration
+    vibration,
+    isHybridNumeric: hasNumericVars,
+    numericDisplacements,
+    numericUnits,
+    numericStresses,
+    numericReactions,
+    numericVibrations,
+    unifiedEABase: Boolean(state.config?.substituteInertia)
   };
 }
