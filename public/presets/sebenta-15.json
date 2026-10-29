@@ -1,0 +1,287 @@
+[
+  {
+    "id": "ex1",
+    "num": 1,
+    "title": "Ex. 1 — Treliça 3 Barras (Desl., σ, Modos Vibração)",
+    "mode": "Barra2D",
+    "forceSym": "P",
+    "targetBar": 2,
+    "targetXi": 0.5,
+    "nodes": [
+      { "id": 1, "label": "A", "x": 0, "y": 0, "support": "pinned", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 2, "label": "B", "x": 1, "y": 0, "support": "pinned", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 3, "label": "C", "x": 1, "y": 1, "support": "pinned", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 4, "label": "D", "x": 0, "y": 1, "support": "free", "rollerAngle": 0, "fx": 2, "fy": -1, "mz": 0 }
+    ],
+    "elements": [
+      { "id": 1, "n1": 1, "n2": 4, "E": 1, "A": 1, "I": 1, "L": 1, "th1": 90, "th2": 90, "p0": 0, "pL": 0, "py": "" },
+      { "id": 2, "n1": 4, "n2": 2, "E": 2, "A": 1, "I": 1, "L": 1.4142, "th1": -45, "th2": -45, "p0": 0, "pL": 0, "py": "" },
+      { "id": 3, "n1": 4, "n2": 3, "E": 3, "A": 1, "I": 1, "L": 1, "th1": 0, "th2": 0, "p0": 0, "pL": 0, "py": "" }
+    ]
+  },
+  {
+    "id": "ex2",
+    "num": 2,
+    "title": "Ex. 2 — Treliça Simétrica 3 Barras (Desl., σ DC, Vibração)",
+    "mode": "Barra2D",
+    "forceSym": "P",
+    "targetBar": 3,
+    "targetXi": 0.5,
+    "nodes": [
+      { "id": 1, "label": "A", "x": -0.5, "y": 0, "support": "pinned", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 2, "label": "B", "x": 0, "y": 0, "support": "pinned", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 3, "label": "C", "x": 0.5, "y": 0, "support": "pinned", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 4, "label": "D", "x": 0, "y": 1, "support": "free", "rollerAngle": 0, "fx": -1, "fy": -1, "mz": 0 }
+    ],
+    "elements": [
+      { "id": 1, "n1": 1, "n2": 4, "E": 1, "A": 1, "I": 1, "L": 1.118, "th1": 63.435, "th2": 63.435, "p0": 0, "pL": 0, "py": "" },
+      { "id": 2, "n1": 2, "n2": 4, "E": 1, "A": 1, "I": 1, "L": 1, "th1": 90, "th2": 90, "p0": 0, "pL": 0, "py": "" },
+      { "id": 3, "n1": 4, "n2": 3, "E": 1, "A": 1, "I": 1, "L": 1.118, "th1": -63.435, "th2": -63.435, "p0": 0, "pL": 0, "py": "" }
+    ]
+  },
+  {
+    "id": "ex3",
+    "num": 3,
+    "title": "Ex. 3 — Treliça em Y (Desl. em C, σ em AC, Vibração)",
+    "mode": "Barra2D",
+    "forceSym": "P",
+    "targetBar": 2,
+    "targetXi": 0.5,
+    "nodes": [
+      { "id": 1, "label": "D", "x": 0, "y": 0, "support": "pinned", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 2, "label": "C", "x": 0, "y": 1, "support": "free", "rollerAngle": 0, "fx": -1, "fy": -2, "mz": 0 },
+      { "id": 3, "label": "A", "x": -0.5, "y": 2, "support": "pinned", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 4, "label": "B", "x": 0.5, "y": 2, "support": "pinned", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 }
+    ],
+    "elements": [
+      { "id": 1, "n1": 1, "n2": 2, "E": 1, "A": 1, "I": 1, "L": 1, "th1": 90, "th2": 90, "p0": 0, "pL": 0, "py": "" },
+      { "id": 2, "n1": 3, "n2": 2, "E": 1, "A": 1, "I": 1, "L": 1.118, "th1": -63.435, "th2": -63.435, "p0": 0, "pL": 0, "py": "" },
+      { "id": 3, "n1": 2, "n2": 4, "E": 1, "A": 1, "I": 1, "L": 1.118, "th1": 63.435, "th2": 63.435, "p0": 0, "pL": 0, "py": "" }
+    ]
+  },
+  {
+    "id": "ex4",
+    "num": 4,
+    "title": "Ex. 4 — Apoio Rolante Inclinado 30° (Zona Crítica e u(x))",
+    "mode": "Barra2D",
+    "forceSym": "P",
+    "targetBar": 1,
+    "targetXi": 0.5,
+    "nodes": [
+      { "id": 1, "label": "A", "x": -0.5, "y": 0, "support": "rollerAngle", "rollerAngle": 30, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 2, "label": "B", "x": 0, "y": 1, "support": "free", "rollerAngle": 0, "fx": 3, "fy": 2, "mz": 0 },
+      { "id": 3, "label": "C", "x": 0.5, "y": 0, "support": "pinned", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 4, "label": "D", "x": 1, "y": 1, "support": "pinned", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 }
+    ],
+    "elements": [
+      { "id": 1, "n1": 1, "n2": 2, "E": 1, "A": 1, "I": 1, "L": 1.118, "th1": 33.435, "th2": 63.435, "p0": 0, "pL": 0, "py": "" },
+      { "id": 2, "n1": 2, "n2": 3, "E": 1, "A": 1, "I": 1, "L": 1.118, "th1": -63.435, "th2": -63.435, "p0": 0, "pL": 0, "py": "" },
+      { "id": 3, "n1": 2, "n2": 4, "E": 1, "A": 2, "I": 1, "L": 1, "th1": 0, "th2": 0, "p0": 0, "pL": 0, "py": "" }
+    ]
+  },
+  {
+    "id": "ex5",
+    "num": 5,
+    "title": "Ex. 5 — Apoio Rolante -20° e Força 2P a 20° (u(x) e Zona Crítica)",
+    "mode": "Barra2D",
+    "forceSym": "P",
+    "targetBar": 1,
+    "targetXi": 0.5,
+    "nodes": [
+      { "id": 1, "label": "A", "x": -0.5, "y": 1, "support": "pinned", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 2, "label": "B", "x": 0, "y": 0, "support": "free", "rollerAngle": 0, "fx": 1.8794, "fy": 0.684, "forceMag": 2, "forceAngle": 20, "mz": 0 },
+      { "id": 3, "label": "C", "x": 0.5, "y": 0, "support": "rollerAngle", "rollerAngle": -20, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 4, "label": "D", "x": 0, "y": -1, "support": "pinned", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 }
+    ],
+    "elements": [
+      { "id": 1, "n1": 1, "n2": 2, "E": 1, "A": 1, "I": 1, "L": 1.118, "th1": -63.435, "th2": -63.435, "p0": 0, "pL": 0, "py": "" },
+      { "id": 2, "n1": 4, "n2": 2, "E": 1, "A": 1, "I": 1, "L": 1, "th1": 90, "th2": 90, "p0": 0, "pL": 0, "py": "" },
+      { "id": 3, "n1": 2, "n2": 3, "E": 1, "A": 2, "I": 1, "L": 0.5, "th1": 0, "th2": -20, "p0": 0, "pL": 0, "py": "" }
+    ]
+  },
+  {
+    "id": "ex6",
+    "num": 6,
+    "title": "Ex. 6 — Quadro Paralelogramo com 3 Apoios Rolantes",
+    "mode": "Barra2D",
+    "forceSym": "F",
+    "targetBar": 4,
+    "targetXi": 0.5,
+    "nodes": [
+      { "id": 1, "label": "C", "x": 0, "y": 0, "support": "rollerX", "rollerAngle": 0, "fx": 3, "fy": 0, "mz": 0 },
+      { "id": 2, "label": "B", "x": 0, "y": 1, "support": "rollerY", "rollerAngle": 90, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 3, "label": "D", "x": 1, "y": 1, "support": "rollerY", "rollerAngle": 90, "fx": 0, "fy": -1, "mz": 0 },
+      { "id": 4, "label": "A", "x": 1, "y": 2, "support": "pinned", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 }
+    ],
+    "elements": [
+      { "id": 1, "n1": 1, "n2": 2, "E": 1, "A": 1, "I": 1, "L": 1, "th1": 90, "th2": 90, "p0": 0, "pL": 0, "py": "" },
+      { "id": 2, "n1": 3, "n2": 4, "E": 1, "A": 1, "I": 1, "L": 1, "th1": 90, "th2": 90, "p0": 0, "pL": 0, "py": "" },
+      { "id": 3, "n1": 2, "n2": 4, "E": 1, "A": 1, "I": 1, "L": 1.4142, "th1": 45, "th2": 45, "p0": 0, "pL": 0, "py": "" },
+      { "id": 4, "n1": 1, "n2": 3, "E": 1, "A": 1, "I": 1, "L": 1.4142, "th1": 45, "th2": 45, "p0": 0, "pL": 0, "py": "" }
+    ]
+  },
+  {
+    "id": "ex7",
+    "num": 7,
+    "title": "Ex. 7 — Viga 2L Trapezoidal (-p/2 a -p: θB, v(L), M(0))",
+    "mode": "Viga",
+    "forceSym": "p",
+    "targetBar": 1,
+    "targetXi": 0.5,
+    "nodes": [
+      { "id": 1, "label": "A", "x": 0, "y": 0, "support": "fixed", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 2, "label": "B", "x": 2, "y": 0, "support": "pinned", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 }
+    ],
+    "elements": [
+      { "id": 1, "n1": 1, "n2": 2, "E": 1, "A": 1, "I": 1, "L": 2, "th1": 0, "th2": 0, "p0": -0.5, "pL": -1, "py": "" }
+    ]
+  },
+  {
+    "id": "ex8",
+    "num": 8,
+    "title": "Ex. 8 — Viga Simétrica 2L (Simetria em x=L, θ(L/2), V(3L/2))",
+    "mode": "Viga",
+    "forceSym": "p",
+    "targetBar": 1,
+    "targetXi": 0.5,
+    "nodes": [
+      { "id": 1, "label": "A", "x": 0, "y": 0, "support": "pinned", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 2, "label": "Meio", "x": 1, "y": 0, "support": "guided", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 }
+    ],
+    "elements": [
+      { "id": 1, "n1": 1, "n2": 2, "E": 1, "A": 1, "I": 1, "L": 1, "th1": 0, "th2": 0, "p0": 0, "pL": -1, "py": "" }
+    ]
+  },
+  {
+    "id": "ex9",
+    "num": 9,
+    "title": "Ex. 9 — Viga 2L (Reação RB no Apoio Rolante e θ(x)=0)",
+    "mode": "Viga",
+    "forceSym": "p",
+    "targetBar": 1,
+    "targetXi": 0.6667,
+    "nodes": [
+      { "id": 1, "label": "A", "x": 0, "y": 0, "support": "fixed", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 2, "label": "B", "x": 2, "y": 0, "support": "pinned", "calcReactionY": true, "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 }
+    ],
+    "elements": [
+      { "id": 1, "n1": 1, "n2": 2, "E": 1, "A": 1, "I": 1, "L": 2, "th1": 0, "th2": 0, "p0": 0, "pL": -1, "py": "" }
+    ]
+  },
+  {
+    "id": "ex10",
+    "num": 10,
+    "title": "Ex. 10 — Pórtico Viga-Barra 6 GDL (Perna 45° + Viga 2L)",
+    "mode": "VigaBarra2D",
+    "forceSym": "p",
+    "targetBar": 1,
+    "targetXi": 0.5,
+    "nodes": [
+      { "id": 1, "label": "A", "x": 0, "y": 0, "support": "fixed", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 2, "label": "B", "x": 0.5, "y": 0.5, "support": "free", "rollerAngle": 0, "fx": 0, "fy": -1, "mz": 0 },
+      { "id": 3, "label": "C", "x": 1, "y": 1, "support": "free", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 4, "label": "D", "x": 3, "y": 1, "support": "fixed", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 }
+    ],
+    "elements": [
+      { "id": 1, "n1": 1, "n2": 2, "E": 1, "A": 1, "I": 1, "L": 0.7071, "th1": 45, "th2": 45, "p0": 0, "pL": 0, "py": "" },
+      { "id": 2, "n1": 2, "n2": 3, "E": 1, "A": 1, "I": 1, "L": 0.7071, "th1": 45, "th2": 45, "p0": 0, "pL": 0, "py": "" },
+      { "id": 3, "n1": 3, "n2": 4, "E": 1, "A": 1, "I": 1, "L": 2, "th1": 0, "th2": 0, "p0": -1, "pL": -1, "py": "" }
+    ]
+  },
+  {
+    "id": "ex11",
+    "num": 11,
+    "title": "Ex. 11 — Pórtico 7 GDL ([K] 7x7 e Vetor de Forças {F})",
+    "mode": "VigaBarra2D",
+    "forceSym": "p",
+    "targetBar": 1,
+    "targetXi": 0.5,
+    "nodes": [
+      { "id": 1, "label": "A", "x": 0, "y": 0, "support": "fixed", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 2, "label": "B", "x": 1, "y": 1, "support": "free", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 3, "label": "C", "x": 3, "y": 1, "support": "free", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 4, "label": "D", "x": 3, "y": 0, "support": "pinned", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 }
+    ],
+    "elements": [
+      { "id": 1, "n1": 1, "n2": 2, "E": 1, "A": 1, "I": 1, "L": 1.4142, "th1": 45, "th2": 45, "p0": -1, "pL": -1, "py": "" },
+      { "id": 2, "n1": 2, "n2": 3, "E": 1, "A": 1, "I": 1, "L": 2, "th1": 0, "th2": 0, "p0": 0, "pL": -1, "py": "" },
+      { "id": 3, "n1": 3, "n2": 4, "E": 1, "A": 1, "I": 1, "L": 1, "th1": -90, "th2": -90, "p0": -1, "pL": -1, "py": "" }
+    ]
+  },
+  {
+    "id": "ex12",
+    "num": 12,
+    "title": "Ex. 12 — Pórtico com Carga Cúbica p(x) = -p·x³/L³",
+    "mode": "VigaBarra2D",
+    "forceSym": "p",
+    "targetBar": 2,
+    "targetXi": 0.5,
+    "nodes": [
+      { "id": 1, "label": "A", "x": 0, "y": 0, "support": "fixed", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 2, "label": "B", "x": 0.5, "y": 1, "support": "free", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 3, "label": "C", "x": 1.5, "y": 1, "support": "free", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 4, "label": "D", "x": 2, "y": 0, "support": "fixed", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 }
+    ],
+    "elements": [
+      { "id": 1, "n1": 1, "n2": 2, "E": 1, "A": 1, "I": 1, "L": 1.118, "th1": 63.435, "th2": 63.435, "p0": 0, "pL": -1, "py": "" },
+      { "id": 2, "n1": 2, "n2": 3, "E": 1, "A": 1, "I": 1, "L": 1, "th1": 0, "th2": 0, "p0": 0, "pL": 0, "py": "-x^3/L^3" },
+      { "id": 3, "n1": 3, "n2": 4, "E": 1, "A": 1, "I": 1, "L": 1.118, "th1": -63.435, "th2": -63.435, "p0": -1, "pL": -1, "py": "" }
+    ]
+  },
+  {
+    "id": "ex13",
+    "num": 13,
+    "title": "Ex. 13 — Viga Bi-Encastrada (L/2 + L/2: M, θ, σ e Vibração)",
+    "mode": "Viga",
+    "forceSym": "p",
+    "targetBar": 2,
+    "targetXi": 0.5,
+    "nodes": [
+      { "id": 1, "label": "A", "x": 0, "y": 0, "support": "fixed", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 2, "label": "M", "x": 0.5, "y": 0, "support": "free", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 3, "label": "B", "x": 1, "y": 0, "support": "fixed", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 }
+    ],
+    "elements": [
+      { "id": 1, "n1": 1, "n2": 2, "E": 1, "A": 1, "I": 1, "L": 0.5, "th1": 0, "th2": 0, "p0": 3, "pL": 3, "py": "" },
+      { "id": 2, "n1": 2, "n2": 3, "E": 1, "A": 1, "I": 1, "L": 0.5, "th1": 0, "th2": 0, "p0": 3, "pL": 2, "py": "" }
+    ]
+  },
+  {
+    "id": "ex14",
+    "num": 14,
+    "title": "Ex. 14 — Sistema de Molas (Energia Potencial Π = Ue - W)",
+    "mode": "Mola",
+    "forceSym": "mg",
+    "targetBar": 1,
+    "targetXi": 0.5,
+    "nodes": [
+      { "id": 1, "label": "Apoio", "x": 0, "y": 0, "support": "fixed", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 2, "label": "m₁", "x": 1, "y": 0, "support": "free", "rollerAngle": 0, "fx": 1, "fy": 0, "mz": 0, "mass": 1 },
+      { "id": 3, "label": "m₂", "x": 2, "y": 0, "support": "free", "rollerAngle": 0, "fx": 1, "fy": 0, "mz": 0, "mass": 1 }
+    ],
+    "elements": [
+      { "id": 1, "n1": 1, "n2": 2, "E": 1, "A": 1, "I": 1, "k": 1, "L": 1, "th1": 0, "th2": 0, "p0": 0, "pL": 0, "py": "" },
+      { "id": 2, "n1": 2, "n2": 3, "E": 2, "A": 1, "I": 1, "k": 2, "L": 1, "th1": 0, "th2": 0, "p0": 0, "pL": 0, "py": "" }
+    ]
+  },
+  {
+    "id": "ex15",
+    "num": 15,
+    "title": "Ex. 15 — Pórtico com Carga Parabólica p(x) = -2p·x²/L",
+    "mode": "VigaBarra2D",
+    "forceSym": "p",
+    "targetBar": 2,
+    "targetXi": 0.5,
+    "nodes": [
+      { "id": 1, "label": "A", "x": 0, "y": 1, "support": "fixed", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 2, "label": "B", "x": 1, "y": 0, "support": "free", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 3, "label": "C", "x": 3, "y": 0, "support": "free", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 },
+      { "id": 4, "label": "D", "x": 3, "y": -1, "support": "fixed", "rollerAngle": 0, "fx": 0, "fy": 0, "mz": 0 }
+    ],
+    "elements": [
+      { "id": 1, "n1": 1, "n2": 2, "E": 1, "A": 1, "I": 1, "L": 1.4142, "th1": -45, "th2": -45, "p0": 0, "pL": -2, "py": "" },
+      { "id": 2, "n1": 2, "n2": 3, "E": 1, "A": 1, "I": 1, "L": 2, "th1": 0, "th2": 0, "p0": 0, "pL": 0, "py": "-2*x^2/L" },
+      { "id": 3, "n1": 3, "n2": 4, "E": 1, "A": 1, "I": 1, "L": 1, "th1": -90, "th2": -90, "p0": -3, "pL": -3, "py": "" }
+    ]
+  }
+]
